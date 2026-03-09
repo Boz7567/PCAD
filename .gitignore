@@ -1,0 +1,14 @@
+# Object files
+*.o
+
+# Executables
+*.out
+
+# Backup files
+*~
+
+# VS Code settings (if using VS Code)
+.vscode/
+
+# MacOS metadata
+.DS_Store
