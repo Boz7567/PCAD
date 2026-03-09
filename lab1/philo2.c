@@ -2,15 +2,12 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <time.h>
 
 #define NUM_PHILOSOPHERS 5
 #define TIMES_TO_EAT 5
 
 pthread_mutex_t forks[NUM_PHILOSOPHERS];
 pthread_mutex_t print_lock;
-
-
 
 void print_state(int philosopher, const char *state) {
     pthread_mutex_lock(&print_lock);
@@ -20,28 +17,29 @@ void print_state(int philosopher, const char *state) {
 }
 
 void *philosopher(void *arg) {
-    srand(time(NULL));
     int id = *(int *)arg;
     int left_fork = id;
     int right_fork = (id + 1) % NUM_PHILOSOPHERS;
     
     for (int i = 0; i < TIMES_TO_EAT; i++) {
         print_state(id, "sta pensando");
-        sleep(1);  
-        
-        pthread_mutex_lock(&forks[left_fork]);
-        print_state(id, "ha la sua bacchetta sinistra");
-        
-        sleep(1);
-        pthread_mutex_lock(&forks[right_fork]);
-        print_state(id, "ha la sua bacchetta destra");
-        
-        print_state(id, "sta mangiando");
         sleep(1); 
+        int first_fork = (left_fork < right_fork) ? left_fork : right_fork;
+        int second_fork = (left_fork < right_fork) ? right_fork : left_fork;
         
-   
-        pthread_mutex_unlock(&forks[right_fork]);
-        pthread_mutex_unlock(&forks[left_fork]);
+        pthread_mutex_lock(&forks[first_fork]);
+        print_state(id, "ha la sua bacchetta");
+        
+        pthread_mutex_lock(&forks[second_fork]);
+        print_state(id, "ha la sua bacchetta");
+        
+        // Mangio
+        print_state(id, "sta mangiando");
+        sleep(1);  // Sleep per simulare il mangiare
+        
+        // Rilascio le bacchette
+        pthread_mutex_unlock(&forks[second_fork]);
+        pthread_mutex_unlock(&forks[first_fork]);
         print_state(id, "ha rilasciato le sue due bacchette");
     }
     
@@ -76,7 +74,7 @@ int main() {
         pthread_mutex_destroy(&forks[i]);
     }
     
-    printf("\nTutti i filosofi hanno finito!\n");
+    printf("\nTutti i filosofi hanno finito senza deadlock!\n");
     
     return 0;
 }
