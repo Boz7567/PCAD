@@ -9,7 +9,7 @@
 pthread_t filosofi[N_FILOSOFI];
 pthread_mutex_t bacchette[N_FILOSOFI];
 
-int id[N_FILOSOFI] = {0,1,2,3,4};
+int id[N_FILOSOFI];
 
 void* filosofo(void* arg){
     int i = *(int*)arg;
@@ -17,8 +17,6 @@ void* filosofo(void* arg){
     for(int pasto=0; pasto<NUM_PASTI; pasto++){
 
         printf("Filosofo %d: sta pensando\n", i);
-        // sleep(rand()%4);
-
         // tempo uguale per tutti, per mostrare il caso di deadlock        
         sleep(1);
 
@@ -43,6 +41,9 @@ void* filosofo(void* arg){
 }
 
 int main(){
+    for(int i = 0; i<N_FILOSOFI; i++){
+        id[i] = i;
+    }
     // srand(time(NULL));
     for(int i=0; i<N_FILOSOFI; i++){
         pthread_mutex_init(&bacchette[i], NULL);
