@@ -50,6 +50,8 @@ void* filosofo(void* arg){
 }
 
 int main(){
+    printf("\nIn questo caso, facciamo in modo che l'ultimo filosofo prenda la bacchetta destra prima della bacchetta sinistra, e facendo ciò evitiamo deadlock\n\n");
+
     for(int i = 0; i<N_FILOSOFI; i++){
         id[i] = i;
     }
