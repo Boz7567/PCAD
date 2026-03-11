@@ -3,7 +3,7 @@
 
 # Executables
 *.out
-*/bin/philo*
+*/bin/*
 
 # Backup files
 *~
