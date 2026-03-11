@@ -20,20 +20,29 @@ void* filosofo(void* arg){
         // tempo uguale per tutti, per mostrare il caso di deadlock        
         sleep(1);
 
-        pthread_mutex_lock(&bacchette[i]);
-        printf("Filosofo %d: ha la bacchetta sinistra\n", i);
+        if(i == N_FILOSOFI - 1){
+            pthread_mutex_lock(&bacchette[0]);   //bacchette[0] perchè non ha senso calcolare bacchette[(i+1)%N_FILOSOFI]
+            printf("Filosofo %d: ha la bacchetta destra (ultimo filosofo prende prima la destra) \n", i);
+            sleep(1);
+            
+            pthread_mutex_lock(&bacchette[i]);   //bacchette[0] perchè non ha senso calcolare bacchette[(i+1)%N_FILOSOFI]
+            printf("Filosofo %d: ha la bacchetta sinistra (ultimo filosofo prende prima la destra) \n", i);
+        }
+        else{
+            pthread_mutex_lock(&bacchette[i]);
+            printf("Filosofo %d: ha la bacchetta sinistra\n", i);
+            sleep(1);
+
+            pthread_mutex_lock(&bacchette[(i+1)%N_FILOSOFI]);
+            printf("Filosofo %d: ha la bacchetta destra\n", i);
+        }
         sleep(1);
-
-        pthread_mutex_lock(&bacchette[(i+1)%N_FILOSOFI]);
-        printf("Filosofo %d: ha la bacchetta destra\n", i);
-
         printf("Filosofo %d: sta mangiando\n", i);
         sleep(2);
 
         pthread_mutex_unlock(&bacchette[i]);
         pthread_mutex_unlock(&bacchette[(i+1)%N_FILOSOFI]);
         printf("Filosofo %d: ha rilasciato le sue due bacchette\n", i);
-
         sleep(1);
     }
 
@@ -60,5 +69,6 @@ int main(){
     for(int i=0; i<N_FILOSOFI; i++){
         pthread_mutex_destroy(&bacchette[i]);
     }
+
     return 0;
 }
