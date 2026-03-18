@@ -10,8 +10,12 @@ unsigned int pthread_my_barrier_init(my_barrier *mb , unsigned int v){
         return -1;
     mb->vinit = v;
     mb->val = 0;
-    pthread_mutex_init(&mb->lock, NULL);
-    pthread_cond_init(&mb->varcond, NULL);
+    if(pthread_mutex_init(&mb->lock, NULL) != 0){
+        return -1;
+    }
+    if(pthread_cond_init(&mb->varcond, NULL) != 0){
+        return -1;
+    }
     return 0;
 }
 
@@ -19,11 +23,15 @@ unsigned int pthread_my_barrier_wait(my_barrier *mb){
     pthread_mutex_lock(&mb->lock);
     mb->val++;
     if(mb->val < mb->vinit){
-        pthread_cond_wait(&mb->varcond, &mb->lock);
+        int retval = pthread_cond_wait(&mb->varcond, &mb->lock);
+        if(retval != 0)
+            return -1;
     }
     else{
         mb->val = 0;
-        pthread_cond_broadcast(&mb->varcond);
+        int retval = pthread_cond_broadcast(&mb->varcond);
+        if(retval != 0)
+            return -1;
     }
     pthread_mutex_unlock(&mb->lock);
     return 0;
