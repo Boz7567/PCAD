@@ -48,10 +48,10 @@ void* passenger_thread(void* arg) {
             pthread_cond_signal(&b->bus_full);
         }
 
-        // (b') Fa il giro 
+        //  Fa il giro 
         pthread_cond_wait(&b->can_offboard, &b->mutex);
 
-        // (c') Scende dal bus
+        // Scende dal bus
         b->count--;
         printf("Passeggero %d Sceso dal bus. (Rimasti a bordo: %d)\n", my_id, b->count);
 
@@ -87,10 +87,10 @@ void* bus_thread(void* arg) {
         printf("Il bus e' pieno e parte per il giro\n\n");
         pthread_mutex_unlock(&b->mutex);
 
-        // (b) Giro della città
+        // Giro
         sleep(3); //per simulare il "giro della città". Mentre il bus dorme, il tempo passa per i turisti a bordo.
 
-        // (c) Ritorno e sbarco
+        //  Ritorna e fa scendere tutti i passengeri
         pthread_mutex_lock(&b->mutex);
         printf("\n Il bus ha finito il giro. Arrivo al punto di partenza. Scendono tutti\n");
         pthread_cond_broadcast(&b->can_offboard);
