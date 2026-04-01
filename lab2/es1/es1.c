@@ -16,6 +16,8 @@ struct bus{
     pthread_cond_t full;
     pthread_cond_t disponibile;
     pthread_cond_t lap;
+
+    bool giro_finito;
 };
 
 pthread_t passeggeri[N_PASSEGGERI];
@@ -38,10 +40,13 @@ void* passenger_func(void* arg){
             pthread_cond_signal(&Bus.full);
             printf("Bus pieno!\n");
         }
-        pthread_cond_wait(&Bus.lap, &Bus.lock);
+
+        while(!Bus.giro_finito)
+            pthread_cond_wait(&Bus.lap, &Bus.lock);
 
         Bus.passeggeri--;
         if(Bus.passeggeri == 0){
+            Bus.giro_finito = false;
             pthread_cond_signal(&Bus.disponibile);
         }
         pthread_mutex_unlock(&Bus.lock);
@@ -57,12 +62,13 @@ void* bus_func(void* arg){
         while(Bus.passeggeri < CAPIENZA_BUS)
             pthread_cond_wait(&Bus.full, &Bus.lock);
 
+        Bus.giro_finito = false;
         printf("\nFACCIO IL GIRO\n");
-
         pthread_mutex_unlock(&Bus.lock);
         sleep(3); // giro du manubrio
         pthread_mutex_lock(&Bus.lock);
         printf("\nGIRO FATTO\n");
+        Bus.giro_finito = true;
         pthread_cond_broadcast(&Bus.lap);
         
         while(Bus.passeggeri > 0)
@@ -75,7 +81,7 @@ void* bus_func(void* arg){
 
 int main(){
     Bus.passeggeri = 0;
-    
+    Bus.giro_finito = false;
     pthread_mutex_init(&Bus.lock, NULL);
     
     pthread_cond_init(&Bus.full, NULL);
