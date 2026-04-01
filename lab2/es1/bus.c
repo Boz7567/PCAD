@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#define N_PASSEGGERI 10
-#define CAPIENZA_BUS 4
+#define N_PASSEGGERI 3
+#define CAPIENZA_BUS 2
 
 typedef struct {
 
@@ -26,9 +26,6 @@ pthread_t passeggeri[N_PASSEGGERI];
 pthread_t bus_thread;
 
 int id[N_PASSEGGERI];
-
-
-// ================= PASSEGGERO =================
 
 void* passenger_func(void* arg){
 
@@ -152,12 +149,7 @@ int main(){
     pthread_cond_init(&Bus.giro_finito, NULL);
 
     // Crea thread bus
-    pthread_create(
-        &bus_thread,
-        NULL,
-        bus_func,
-        NULL
-    );
+    pthread_create(&bus_thread, NULL, bus_func, NULL);
 
     // Crea thread passeggeri
     for(int i = 0; i < N_PASSEGGERI; i++){
