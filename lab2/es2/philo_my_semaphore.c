@@ -12,15 +12,13 @@ pthread_t filosofo[N_FILOSOFI];
 void* func(void* arg){
     int id = *(int*)arg;
     free(arg);
-    // printf("\n%d\n", id);
     for(int i = 0; i<3; i++){   //mangio 3 volte
-        // printf("\nFilosofo numero %d:", id);
         my_sem_wait(&ticket);
         my_sem_wait(&bacchette[id]);
         my_sem_wait(&bacchette[(id+1)%N_FILOSOFI]);
         printf("Filosofo %d mangia\n", id);
         sleep(1);
-        printf("Filosofo %d finisce di mangiare\n", id);
+        printf("Filosofo %d finisce di mangiare [%d/3]\n", id, i+1);
         my_sem_signal(&bacchette[id]);
         my_sem_signal(&bacchette[(id+1)%N_FILOSOFI]);
         my_sem_signal(&ticket);
