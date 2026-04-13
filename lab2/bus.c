@@ -14,7 +14,7 @@ typedef struct {
     
     pthread_mutex_t mutex;
     pthread_cond_t can_board;    // "Sveglio" i passeggeri alla fermata
-    pthread_cond_t bus_full;     // wake up bus!
+    pthread_cond_t bus_full;     // bisogna svegliare l'autobus!
     pthread_cond_t can_offboard; // i passeggeri scendono
     pthread_cond_t bus_empty;    // tutti sono scesi
 } Bus;
@@ -72,17 +72,16 @@ void* bus_thread(void* arg) {
     while (true) {
         pthread_mutex_lock(&b->mutex);
 
-        // Il bus arriva alla fermata e apre le porte
+        // Il bus arriva alla fermata 
         printf("\n Arrivato alla fermata. Apre le porte. \n");
         b->bus_ready = true;
         pthread_cond_broadcast(&b->can_board);
 
-        // Aspetto che il bus sia pieno
         while (b->count < BUS_CAPACITY) {
             pthread_cond_wait(&b->bus_full, &b->mutex);
         }
 
-        // Chiude le porte e parte
+        
         b->bus_ready = false;
         printf("Il bus e' pieno e parte per il giro\n\n");
         pthread_mutex_unlock(&b->mutex);
@@ -107,4 +106,46 @@ void* bus_thread(void* arg) {
     }
     return NULL;
 }
+int main() {
+    Bus myBus;
 
+    myBus.count = 0;
+    myBus.bus_ready = false;
+    
+    pthread_mutex_init(&myBus.mutex, NULL);
+    pthread_cond_init(&myBus.can_board, NULL);
+    pthread_cond_init(&myBus.bus_full, NULL);
+    pthread_cond_init(&myBus.can_offboard, NULL);
+    pthread_cond_init(&myBus.bus_empty, NULL);
+
+    pthread_t bus_tid;
+    pthread_t passenger_tids[PASSENGERS];
+
+    if (pthread_create(&bus_tid, NULL, bus_thread, &myBus) != 0) {
+        perror("Errore creazione thread bus");
+        return 1;
+    }
+
+    for (int i = 0; i < PASSENGERS; i++) {
+        Passenger *p = (Passenger*)malloc(sizeof(Passenger));
+        p->id = i + 1;
+        p->bus = &myBus;
+        
+        if (pthread_create(&passenger_tids[i], NULL, passenger_thread, p) != 0) {
+            perror("Errore creazione thread passeggero");
+            return 1;
+        }
+    }
+
+    pthread_join(bus_tid, NULL);
+    for (int i = 0; i < PASSENGERS; i++) {
+        pthread_join(passenger_tids[i], NULL);
+    }
+    pthread_mutex_destroy(&myBus.mutex);
+    pthread_cond_destroy(&myBus.can_board);
+    pthread_cond_destroy(&myBus.bus_full);
+    pthread_cond_destroy(&myBus.can_offboard);
+    pthread_cond_destroy(&myBus.bus_empty);
+
+    return 0;
+}
