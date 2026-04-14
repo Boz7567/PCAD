@@ -6,6 +6,7 @@
 
 #define N 7
 #define C 5
+#define SLEEP 1
 
 pthread_t pass[N];
 
@@ -76,7 +77,7 @@ void *tour(void *ptr){
 
         pthread_mutex_unlock(&bus.lock);
 
-        sleep(2);
+        sleep(SLEEP);
 
         pthread_mutex_lock(&bus.lock);
 
@@ -131,6 +132,6 @@ void *up(void *ptr){
 
         pthread_mutex_unlock(&bus.lock);
 
-        sleep(1);
+        sleep(SLEEP);
     }
 }
