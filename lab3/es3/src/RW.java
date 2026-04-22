@@ -1,36 +1,45 @@
-public class RW extends RWbasic{
-    private int counter;
-
-    public RW(){
-        super();
-        counter = 0;
-    }
+public class RW extends RWbasic {
+    private int readers = 0;
+    private boolean writing = false;
 
     @Override
-    public synchronized int read(){
-        try {
-            while(counter != 0){
-                wait();
+    public int read() {
+        synchronized (this) {
+            while(writing) {
+                try{
+                    wait(); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            counter++;
-            notifyAll();
-        } catch (Exception e) {
-            e.printStackTrace();
+            readers++;
         }
-        return super.read();
-    }
-    
-    @Override
-    public synchronized void write(){
-        try {
-            while(counter == 0){
-                wait();
+
+        int result = super.read();
+
+        synchronized (this) {
+            readers--;
+            if (readers == 0) {
+                notifyAll();
             }
-            counter--;
+        }
+        return result;
+    }
+
+    @Override
+    public void write() {
+        synchronized(this){
+            while (readers > 0 || writing) {
+                try { wait(); } catch (InterruptedException e) {}
+            }
+            writing = true;
+        }
+
+        super.write();
+
+        synchronized (this) {
+            writing = false;
             notifyAll();
-            super.write();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
