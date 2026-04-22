@@ -1,7 +1,7 @@
 public class Reader implements Runnable{
-    private final RWexclusive rw;
+    private final RW rw;
 
-    public Reader(RWexclusive rw){
+    public Reader(RW rw){
         this.rw = rw;
     }
 

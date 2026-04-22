@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) throws Exception {
         System.out.println("This is es3");
-        RWexclusive rw = new RWexclusive();
+        RW rw = new RW();
         Thread arr[] = new Thread[100];
         for (int i = 0; i < 50; i++) {
             String aux = String.valueOf(i);

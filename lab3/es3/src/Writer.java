@@ -1,7 +1,7 @@
 public class Writer implements Runnable{
-    private final RWexclusive rw;
+    private final RW rw;
 
-    public Writer(RWexclusive rw){
+    public Writer(RW rw){
         this.rw = rw;
     }
 

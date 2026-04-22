@@ -1,6 +1,11 @@
 public class RW extends RWbasic{
     private int counter;
 
+    public RW(){
+        super();
+        counter = 0;
+    }
+
     @Override
     public synchronized int read(){
         try {
