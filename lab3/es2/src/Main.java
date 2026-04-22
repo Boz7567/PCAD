@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        System.out.println("This is es2");
         RWexclusive rw = new RWexclusive();
         Thread arr[] = new Thread[100];
         for (int i = 0; i < 50; i++) {
