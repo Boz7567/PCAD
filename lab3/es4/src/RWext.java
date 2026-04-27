@@ -1,7 +1,14 @@
 public class RWext extends RWbasic {
-    private int readers = 0;
-    private boolean writing = false;
-    private boolean valueRead = true;
+    private int readers;        //0
+    private boolean writing;    //false
+    private boolean valueRead;  //true
+
+    public RWext(){
+        super();
+        readers = 0;
+        writing = false;
+        valueRead = true;
+    }
 
     @Override
     public int read() {
