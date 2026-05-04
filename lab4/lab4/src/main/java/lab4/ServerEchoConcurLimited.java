@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ServerEchoConcurLimited{
     private static final int PORT_NUMBER = 4242;
     public static void main(String[] args) {
-        LinkedBlockingQueue<String> sharedQueue = new LinkedBlockingQueue<>(50);
+        LinkedBlockingQueue<String> sharedQueue = new LinkedBlockingQueue<>(3);
 
         try (ServerSocket server = new ServerSocket(PORT_NUMBER)) {
             System.out.println("Server in ascolto sulla porta " + PORT_NUMBER);
