@@ -63,6 +63,6 @@ public class ServiceEcho implements Runnable {
             try {
                 socket.close(); 
             } catch (IOException e) {}
-            }
+        }
     }
 }
