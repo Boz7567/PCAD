@@ -4,7 +4,11 @@ import java.util.LinkedList;
 
 public class MyQueue {
 
-    private final LinkedList<String> queue = new LinkedList<>();
+    private final LinkedList<String> queue;
+
+    public MyQueue(){
+        queue = new LinkedList<>();
+    }
 
     public synchronized void push(String val) throws InterruptedException {
 
