@@ -1,4 +1,5 @@
 package lab4;
+
 import java.util.LinkedList;
 
 public class MyQueue {
