@@ -1,4 +1,4 @@
-package lab5;
+package lab5.es1;
 
 import java.util.concurrent.Semaphore;
 
