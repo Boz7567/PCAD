@@ -1,3 +1,4 @@
+// ProducerClient.java
 package lab4;
 
 import java.io.BufferedReader;
@@ -6,36 +7,48 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class ProducerClient {
-    public static void main(String[] args) {
-        String host = "localhost";
-        int port = 4242;
+    static final int NUM_PRODUCERS = 2;
 
-        try {
-            Socket socket = new Socket(host, port);
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-            Scanner scanner = new Scanner(System.in);
+    static class ProducerTask implements Runnable {
+        private final int id;
 
-            pw.println("producer");
-            pw.flush();
-
-            String response = br.readLine();
-            System.out.println("Server: " + response);
-
-            System.out.print("Enter string to send: ");
-            String message = scanner.nextLine();
-
-            pw.println(message);
-            pw.flush();
-
-            response = br.readLine();
-            System.out.println("Server: " + response);
-
-        } catch (IOException e) {
-            System.err.println("Connection error: " + e.getMessage());
+        ProducerTask(int id) {
+            this.id = id;
         }
+
+        @Override
+        public void run() {
+            try {
+                Socket socket = new Socket("localhost", 4242);
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                pw.println("producer");
+                pw.flush();
+                br.readLine(); // okprod
+
+                pw.println("hello from producer " + id);
+                pw.flush();
+                System.out.println("[Producer " + id + "] server replied: " + br.readLine()); // okins
+
+                br.close();
+                socket.close();
+            } catch (IOException e) {
+                System.err.println("[Producer " + id + "] error: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[NUM_PRODUCERS];
+
+        for (int i = 0; i < NUM_PRODUCERS; i++) {
+            threads[i] = new Thread(new ProducerTask(i));
+        }
+
+        for (Thread t : threads) t.start();
+        for (Thread t : threads) t.join();
     }
 }
