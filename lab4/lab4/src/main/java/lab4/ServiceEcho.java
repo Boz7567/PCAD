@@ -6,14 +6,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class ServiceEcho implements Runnable {
 
-    private final LinkedBlockingQueue<String> fifo;
+    private final MyQueue fifo;
     private final Socket socket;
 
-    public ServiceEcho(Socket socket, LinkedBlockingQueue<String> fifo) {
+    public ServiceEcho(Socket socket, MyQueue fifo) {
         this.socket = socket;
         this.fifo = fifo;
     }
@@ -34,7 +33,7 @@ public class ServiceEcho implements Runnable {
 
                     String data = br.readLine();
                     if (data != null) {
-                        fifo.put(data);
+                        fifo.push(data);
                         pw.println("okins");
                         pw.flush();
                     }
@@ -45,7 +44,7 @@ public class ServiceEcho implements Runnable {
                     pw.flush();
 
                     // take() passive wait teoricamente
-                    String data = fifo.take();
+                    String data = fifo.pop();
                     pw.println(data);
                     pw.flush();
                     break;

@@ -3,12 +3,11 @@ package lab4;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class ServerEchoConcur {
     private static final int PORT_NUMBER = 4242;
     public static void main(String[] args) {
-        LinkedBlockingQueue<String> sharedQueue = new LinkedBlockingQueue<>();
+        MyQueueUnlim sharedQueue = new MyQueueUnlim();
 
         try (ServerSocket server = new ServerSocket(PORT_NUMBER)) {
             System.out.println("Server in ascolto sulla porta " + PORT_NUMBER);
